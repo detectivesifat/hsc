@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSC 2026 Resources - Organized</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+            --radius: 12px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0f172a, #1e40af, #3b82f6);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .header h1 { font-size: 2rem; margin-bottom: 0.25rem; position: relative; }
+        .header p { opacity: 0.85; font-size: 1rem; position: relative; }
+
+        .search-box {
+            max-width: 600px;
+            margin: -1.5rem auto 1.5rem;
+            padding: 0 1rem;
+            position: relative;
+            z-index: 10;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 14px 24px;
+            border: 2px solid transparent;
+            border-radius: 50px;
+            font-size: 1rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            outline: none;
+            transition: all 0.3s;
+        }
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 8px 25px rgba(37,99,235,0.2);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.25rem;
+            border-radius: var(--radius);
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+        .stat-card .number { font-size: 1.75rem; font-weight: 800; color: var(--primary); }
+        .stat-card .label { font-size: 0.85rem; color: var(--text-light); font-weight: 500; }
+
+        /* Category */
+        .category {
+            margin-bottom: 1.5rem;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            background: var(--card-bg);
+        }
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s;
+            border-bottom: 1px solid transparent;
+        }
+        .category-header:hover { background: #f8fafc; }
+        .category-header.active { border-bottom-color: var(--border); }
+        .category-header .icon { font-size: 1.5rem; width: 36px; text-align: center; }
+        .category-header h2 { font-size: 1.2rem; flex: 1; font-weight: 700; }
+        .category-header .count {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            background: var(--bg);
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+        .category-header .toggle {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            transition: transform 0.3s;
+            width: 24px;
+            text-align: center;
+        }
+        .category-header.active .toggle { transform: rotate(180deg); }
+
+        .category-content { display: none; padding: 1rem 1.5rem; }
+        .category-content.show { display: block; }
+
+        /* Subcategory with dropdown */
+        .subcategory {
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        .subcategory:hover { border-color: #cbd5e1; }
+
+        .sub-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.7rem 1rem;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .sub-header .sub-icon { font-size: 1.1rem; width: 24px; text-align: center; }
+        .sub-header .sub-label { flex: 1; }
+        .sub-header .sub-count {
+            font-size: 0.75rem;
+            background: rgba(255,255,255,0.5);
+            padding: 1px 8px;
+            border-radius: 12px;
+        }
+        .sub-header .sub-toggle {
+            font-size: 0.8rem;
+            transition: transform 0.3s;
+            width: 20px;
+            text-align: center;
+        }
+        .sub-header.active .sub-toggle { transform: rotate(180deg); }
+
+        .sub-content { display: none; padding: 0.5rem 1rem 0.75rem; }
+        .sub-content.show { display: block; }
+
+        /* Gradient sub-header colors */
+        .sub-blue { background: linear-gradient(135deg, #dbeafe, #eff6ff); border-bottom: 2px solid #93c5fd; }
+        .sub-green { background: linear-gradient(135deg, #d1fae5, #ecfdf5); border-bottom: 2px solid #6ee7b7; }
+        .sub-purple { background: linear-gradient(135deg, #ede9fe, #f5f3ff); border-bottom: 2px solid #c4b5fd; }
+        .sub-orange { background: linear-gradient(135deg, #fef3c7, #fffbeb); border-bottom: 2px solid #fcd34d; }
+        .sub-red { background: linear-gradient(135deg, #fee2e2, #fef2f2); border-bottom: 2px solid #fca5a5; }
+        .sub-pink { background: linear-gradient(135deg, #fce7f3, #fdf2f8); border-bottom: 2px solid #f9a8d4; }
+        .sub-cyan { background: linear-gradient(135deg, #cffafe, #ecfeff); border-bottom: 2px solid #67e8f9; }
+        .sub-indigo { background: linear-gradient(135deg, #e0e7ff, #eef2ff); border-bottom: 2px solid #a5b4fc; }
+        .sub-teal { background: linear-gradient(135deg, #ccfbf1, #f0fdfa); border-bottom: 2px solid #5eead4; }
+        .sub-gray { background: linear-gradient(135deg, #f1f5f9, #f8fafc); border-bottom: 2px solid #cbd5e1; }
+
+        /* Link items */
+        .link-list { list-style: none; }
+        .link-item {
+            padding: 0.6rem 0.75rem;
+            margin: 0.3rem 0;
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        .link-item:hover {
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(37,99,235,0.1);
+            transform: translateX(3px);
+        }
+        .link-item a {
+            color: var(--text);
+            text-decoration: none;
+            display: block;
+        }
+        .link-item a:hover { color: var(--primary); }
+        .link-item .title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .link-item .desc {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 1px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .badge-yt { background: #fee2e2; color: #dc2626; }
+        .badge-tg { background: #dbeafe; color: #2563eb; }
+        .badge-drive { background: #d1fae5; color: #059669; }
+        .badge-pdf { background: #fef3c7; color: #d97706; }
+        .badge-form { background: #ede9fe; color: #7c3aed; }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.4rem; }
+            .container { padding: 0.75rem; }
+            .category-header { padding: 0.75rem 1rem; }
+            .category-content { padding: 0.75rem 1rem; }
+            .sub-header { padding: 0.6rem 0.75rem; font-size: 0.9rem; }
+            .sub-content { padding: 0.4rem 0.75rem 0.6rem; }
+            .stats { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+            .stat-card { padding: 0.75rem; }
+            .stat-card .number { font-size: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>HSC 2026 Resources</h1>
+        <p>Organized from HSC 2026 Channel &amp; PDF Library - ARC</p>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search by subject, course name, or keyword..." onkeyup="filterResources()">
+    </div>
+
+    <div class="container">
+        <div class="stats">
+            <div class="stat-card"><div class="number">13</div><div class="label">Categories</div></div>
+            <div class="stat-card"><div class="number">150+</div><div class="label">Resources</div></div>
+            <div class="stat-card"><div class="number">2</div><div class="label">Channels</div></div>
+        </div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- PHYSICS -->
+        <!-- ════════════════════════════════════════ -->
+        <div class="category" data-searchable>
+            <div class="category-header" onclick="toggleCategory(this)">
+                <span class="icon">&#x1F52C;</span>
+                <h2>Physics</h2>
+                <span class="count">25 resources</span>
+                <span class="toggle">&#x25BC;</span>
+            </div>
+            <div class="category-content">
+
+                <!-- ACS HSC 26 Cycles -->
+                <div class="subcategory">
+                    <div class="sub-header sub-blue" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F3AC;</span>
+                        <span class="sub-label">ACS HSC 26 - Complete Cycles (1 to 6)</span>
+                        <span class="sub-count">9</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/mdacademic/1244" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> ACS Cycle 1 Full + 1st Paper Full</div><div class="desc">MD Academic Channel</div></a></li>
+                            <li class="link-item"><a href="https://youtube.com/playlist?list=PLV5isxfQAvBpwx-ZdDlYIV0o1GSPnG9ZE" target="_blank"><div class="title"><span class="badge badge-yt">YT</span> ACS Cycle 1 Archive</div><div class="desc">YouTube Playlist</div></a></li>
+                            <li class="link-item"><a href="https://youtube.com/playlist?list=PLV5isxfQAvBqBdwRBD-7xGsBsMXaxx3ya" target="_blank"><div class="title"><span class="badge badge-yt">YT</span> ACS Cycle 2 Archive</div><div class="desc">YouTube Playlist</div></a></li>
+                            <li class="link-item"><a href="https://youtube.com/playlist?list=PLV5isxfQAvBqDV-n9mdx4ovs56blDa-CN" target="_blank"><div class="title"><span class="badge badge-yt">YT</span> ACS Cycle 3 Archive</div><div class="desc">YouTube Playlist</div></a></li>
+                            <li class="link-item"><a href="https://youtube.com/playlist?list=PLV5isxfQAvBreWLTwnywiakfsJf7TydIT" target="_blank"><div class="title"><span class="badge badge-yt">YT</span> ACS Cycle 4 Archive</div><div class="desc">YouTube Playlist</div></a></li>
+                            <li class="link-item"><a href="https://youtube.com/playlist?list=PLV5isxfQAvBqQRZbdanOgHN4HqrEseqrz" target="_blank"><div class="title"><span class="badge badge-yt">YT</span> ACS Cycle 5 Archive</div><div class="desc">YouTube Playlist</div></a></li>
+                            <li class="link-item"><a href="https://youtube.com/playlist?list=PLV5isxfQAvBpyRmOCDMNt5JMJyhA3-41E" target="_blank"><div class="title"><span class="badge badge-yt">YT</span> ACS Cycle 6 Archive</div><div class="desc">YouTube Playlist</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/8846?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Royal Guide HSC-26 - Physics 1st</div><div class="desc">IQ Gamer PDF Store</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/8848?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Royal Guide HSC-26 - Physics 2nd</div><div class="desc">IQ Gamer PDF Store</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- CPS HSC 26 -->
+                <div class="subcategory">
+                    <div class="sub-header sub-green" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4A1;</span>
+                        <span class="sub-label">CPS HSC 26 Physics</span>
+                        <span class="sub-count">1</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/mdacademic/1234" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> CPS HSC 26 Physics 1st Paper</div><div class="desc">MD Academic Channel</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Do or Die -->
+                <div class="subcategory">
+                    <div class="sub-header sub-red" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F525;</span>
+                        <span class="sub-label">Do or Die HSC 26</span>
+                        <span class="sub-count">2</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/mdacademic/1093" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Do or Die 3.1 HSC 26</div><div class="desc">MD Academic Channel</div></a></li>
+                            <li class="link-item"><a href="https://t.me/mdacademic/1120" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Do or Die 3.2 HSC 26</div><div class="desc">MD Academic Channel</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Physics of Stupid (POS) -->
+                <div class="subcategory">
+                    <div class="sub-header sub-purple" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F9E0;</span>
+                        <span class="sub-label">Physics of Stupid (POS)</span>
+                        <span class="sub-count">4</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/+5cF2uavCDb5kNDI9" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> POS HSC 26 1st Paper Batch (Elites)</div><div class="desc">Telegram Group</div></a></li>
+                            <li class="link-item"><a href="https://youtube.com/playlist?list=PLV5isxfQAvBp83srxoGTdWjtE1RqNTZQK" target="_blank"><div class="title"><span class="badge badge-yt">YT</span> POS HSC 25 Physics 2nd Paper</div><div class="desc">YouTube Playlist</div></a></li>
+                            <li class="link-item"><a href="https://t.me/+PU0EG6bB7vw3MjA1" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> POS Revision Course 25</div><div class="desc">Telegram Group</div></a></li>
+                            <li class="link-item"><a href="https://t.me/+MgUnYVxj-TthMmM1" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> POS McQ Genius Course 25</div><div class="desc">Telegram Group</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- BP Powerplay -->
+                <div class="subcategory">
+                    <div class="sub-header sub-orange" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x26A1;</span>
+                        <span class="sub-label">BP Powerplay &amp; গাণিতিক পদার্থবিজ্ঞান</span>
+                        <span class="sub-count">2</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/+kvPnbNm33uM3OWE1" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> BP গাণিতিক পদার্থবিজ্ঞান 2.0</div><div class="desc">Telegram Group</div></a></li>
+                            <li class="link-item"><a href="https://t.me/BPplaymd" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> BP Powerplay 25 Physics</div><div class="desc">Telegram Channel</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Main Books -->
+                <div class="subcategory">
+                    <div class="sub-header sub-cyan" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4DA;</span>
+                        <span class="sub-label">Main Books (Google Drive)</span>
+                        <span class="sub-count">2</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://drive.google.com/drive/folders/1PIZeHngibRnrniPLlSgVCJeGywvMGr0Z" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> Physics 1st Paper - Main Book PDF</div><div class="desc">Google Drive Folder</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/drive/folders/1fEHNUQUXInyZr3X-67QKox1otO7lYvo6" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> Physics 2nd Paper - Main Book PDF</div><div class="desc">Google Drive Folder</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Physics Notes -->
+                <div class="subcategory">
+                    <div class="sub-header sub-indigo" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4DD;</span>
+                        <span class="sub-label">Formula &amp; Hand Notes</span>
+                        <span class="sub-count">3</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/2342?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Physics 1st &amp; 2nd Theory &amp; Formula Hand Note</div><div class="desc">By SHOAIB ALAM</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/2237?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Short Notes: তড়িৎ প্রবাহের চৌম্বক ক্রিয়া ও চুম্বকত্ব</div><div class="desc">By RonySSMC</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/2239?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Tricks &amp; Tips: পৃষ্ঠটান</div><div class="desc">By RonySSMC</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- CHEMISTRY -->
+        <!-- ════════════════════════════════════════ -->
+        <div class="category" data-searchable>
+            <div class="category-header" onclick="toggleCategory(this)">
+                <span class="icon">&#x2697;</span>
+                <h2>Chemistry</h2>
+                <span class="count">8 resources</span>
+                <span class="toggle">&#x25BC;</span>
+            </div>
+            <div class="category-content">
+
+                <div class="subcategory">
+                    <div class="sub-header sub-green" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F3AC;</span>
+                        <span class="sub-label">ACS Chemistry Cycle 2 - HSC 26</span>
+                        <span class="sub-count">1</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/mdacademic" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> ACS Chemistry Cycle 2 by Mottasin Pahlovi</div><div class="desc">MD Academic Channel</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-blue" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4DA;</span>
+                        <span class="sub-label">Main Books (Google Drive)</span>
+                        <span class="sub-count">2</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://drive.google.com/drive/folders/1pXjPOqeAXgETXxK8h-e_H7fsLuu_Ck_F" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> Chemistry 1st Paper - Main Book PDF</div><div class="desc">Google Drive Folder</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/drive/folders/1OpYY6LV7knhUy9w_fgyVvocBSMHyVAz0" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> Chemistry 2nd Paper - Main Book PDF</div><div class="desc">Google Drive Folder</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-orange" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F451;</span>
+                        <span class="sub-label">Royal Guide HSC-26</span>
+                        <span class="sub-count">2</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/8850?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Chemistry 1st</div><div class="desc">IQ Gamer PDF Store</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/8852?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Chemistry 2nd</div><div class="desc">IQ Gamer PDF Store</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-purple" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F9EA;</span>
+                        <span class="sub-label">Retina Chemistry Notes (2021)</span>
+                        <span class="sub-count">5</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Lab Safety (ল্যাবরেটরির নিরাপদ ব্যবহার)</div><div class="desc">Retina 2021 Class Note</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Qualitative Chemistry (গুণগত রসায়ন)</div><div class="desc">Retina 2021 Class Note</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Organic Chemistry (জৈব রসায়ন)</div><div class="desc">Retina 2021 Class Note</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Quantitative Chemistry (পরিমাণগত রসায়ন)</div><div class="desc">Retina 2021 Class Note</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Periodic Properties &amp; Chemical Bonding</div><div class="desc">Retina 2021 Class Note</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- BIOLOGY -->
+        <!-- ════════════════════════════════════════ -->
+        <div class="category" data-searchable>
+            <div class="category-header" onclick="toggleCategory(this)">
+                <span class="icon">&#x1F9EC;</span>
+                <h2>Biology</h2>
+                <span class="count">16 resources</span>
+                <span class="toggle">&#x25BC;</span>
+            </div>
+            <div class="category-content">
+
+                <div class="subcategory">
+                    <div class="sub-header sub-blue" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4DA;</span>
+                        <span class="sub-label">Main Books (Google Drive)</span>
+                        <span class="sub-count">2</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://drive.google.com/drive/folders/1lFkXhd_7eiYZyiZfvmCHhXn-3WsHBNqk" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> Biology 1st Paper - Main Book PDF</div><div class="desc">Google Drive Folder</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/drive/folders/1kx8dfTrZauis7TMGDnZmcQFZpeSEC_ZK" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> Biology 2nd Paper - Main Book PDF</div><div class="desc">Google Drive Folder</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-orange" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F451;</span>
+                        <span class="sub-label">Royal Guide HSC-26</span>
+                        <span class="sub-count">2</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/8839?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Biology 1st</div><div class="desc">IQ Gamer PDF Store</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/8844?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Biology 2nd</div><div class="desc">IQ Gamer PDF Store</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-green" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4D6;</span>
+                        <span class="sub-label">Marked Books (Rajib Vai - RCExam CDN)</span>
+                        <span class="sub-count">7</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://rcexam.sgp1.cdn.digitaloceanspaces.com/topperon/organization/slides/Marked%20(Abdul%20Hasan%20Sir)%20Cell%20&%20It's%20Structure-a07c2ca1-8471-4e80-9be5-acd16b9dd51c.pdf" target="_blank"><div class="title"><span class="badge badge-pdf">PDF</span> Chapter 1: Cell &amp; Its Structure</div><div class="desc">Abdul Hasan Sir - Marked by Rajib Vai</div></a></li>
+                            <li class="link-item"><a href="https://rcexam.sgp1.cdn.digitaloceanspaces.com/topperon/organization/slides/Marked%20(Abul%20Hasan%20Sir)%20Cell%20Division-eb065046-5064-48ca-bbfe-7d979f4b46ea.pdf" target="_blank"><div class="title"><span class="badge badge-pdf">PDF</span> Chapter 2: Cell Division</div><div class="desc">Abul Hasan Sir - Marked by Rajib Vai</div></a></li>
+                            <li class="link-item"><a href="https://rcexam.sgp1.cdn.digitaloceanspaces.com/topperon/organization/slides/Marked%20(Abdul%20Hasan%20Sir)%20Cell%20Chemistry-56c979a3-a656-4e72-8716-548754d0d2fe.pdf" target="_blank"><div class="title"><span class="badge badge-pdf">PDF</span> Chapter 3: Cell Chemistry</div><div class="desc">Abdul Hasan Sir - Marked by Rajib Vai</div></a></li>
+                            <li class="link-item"><a href="https://rcexam.sgp1.cdn.digitaloceanspaces.com/topperon/organization/slides/Marked%20(Abdul%20Hasan%20Sir)%20Micro-Organism-b9906ee7-799a-4317-a0aa-0a248e1e37e6.pdf" target="_blank"><div class="title"><span class="badge badge-pdf">PDF</span> Chapter 4: Microorganism</div><div class="desc">Abdul Hasan Sir - Marked by Rajib Vai</div></a></li>
+                            <li class="link-item"><a href="https://rcexam.sgp1.cdn.digitaloceanspaces.com/topperon/organization/slides/Marked%20(Abul%20Hasan%20Sir)%20Algae%20And%20Fungi-9dbba7b8-82a8-446d-9482-7bd72fd4faa4.pdf" target="_blank"><div class="title"><span class="badge badge-pdf">PDF</span> Chapter 5: Algae &amp; Fungi</div><div class="desc">Abul Hasan Sir - Marked by Rajib Vai</div></a></li>
+                            <li class="link-item"><a href="https://rcexam.sgp1.cdn.digitaloceanspaces.com/topperon/organization/slides/Marked%20(Abul%20Hasan%20Sir)%20Bryophyta%20&%20Pterydophyta-c5a657a7-5243-4249-b6a1-5aeb8309db21.pdf" target="_blank"><div class="title"><span class="badge badge-pdf">PDF</span> Chapter 6: Bryophyta &amp; Pteridophyta</div><div class="desc">Abul Hasan Sir - Marked by Rajib Vai</div></a></li>
+                            <li class="link-item"><a href="https://rcexam.sgp1.cdn.digitaloceanspaces.com/topperon/organization/slides/Marked%20(Abdul%20Hasan%20Sir)%20Gymnosperms%20&%20Angiosperms-b8193c60-ae95-4aa9-b181-9888ca517389.pdf" target="_blank"><div class="title"><span class="badge badge-pdf">PDF</span> Chapter 7: Gymnosperms &amp; Angiosperms</div><div class="desc">Abdul Hasan Sir - Marked by Rajib Vai</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-purple" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4DD;</span>
+                        <span class="sub-label">Biology Notes &amp; Important Topics</span>
+                        <span class="sub-count">3</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/2222?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Biology At a Glance - RonySSMC</div><div class="desc">Quick revision notes</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/2212?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Limiting Factor, Photorespiration, Glycolysis, Krebs Cycle</div><div class="desc">Retina Exclusive Notes Part 2</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/2216?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Electron Transport &amp; Anaerobic Respiration</div><div class="desc">Retina Exclusive Notes</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- MATHEMATICS -->
+        <!-- ════════════════════════════════════════ -->
+        <div class="category" data-searchable>
+            <div class="category-header" onclick="toggleCategory(this)">
+                <span class="icon">&#x1F4D0;</span>
+                <h2>Mathematics (Higher Math)</h2>
+                <span class="count">7 resources</span>
+                <span class="toggle">&#x25BC;</span>
+            </div>
+            <div class="category-content">
+
+                <div class="subcategory">
+                    <div class="sub-header sub-blue" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4DA;</span>
+                        <span class="sub-label">Main Books</span>
+                        <span class="sub-count">2</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://drive.google.com/drive/folders/11NnEw7VrZm2s4VWS6XON7IxIicuRT5eD" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> Higher Math 1st Paper - Main Book</div><div class="desc">Google Drive Folder</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/drive/folders/1_1iqFnN_lmFjeDeP--t-pUJ3cbCh30vf" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> Higher Math 2nd Paper - Main Book</div><div class="desc">Google Drive Folder</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-orange" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F451;</span>
+                        <span class="sub-label">Royal Guide HSC-26</span>
+                        <span class="sub-count">2</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/8857?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Higher Math 1st</div><div class="desc">IQ Gamer PDF Store</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/8860?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Higher Math 2nd</div><div class="desc">IQ Gamer PDF Store</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-green" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4DD;</span>
+                        <span class="sub-label">Notes &amp; Lecture Sheets</span>
+                        <span class="sub-count">2</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/2288?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Edge Course Lecture Sheet - Math</div><div class="desc">Physics/Chemistry/Math combined</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/2238?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> MEDI MATH P-2 (Electrostatics)</div><div class="desc">By RonySSMC</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-indigo" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F58D;</span>
+                        <span class="sub-label">Hand Notes (Various Topics)</span>
+                        <span class="sub-count">5</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Matrix (ম্যাট্রিক্স)</div><div class="desc">Hand Note - PDF Library</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Straight Line (সরলরেখা)</div><div class="desc">Hand Note - PDF Library</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Differentiation (অন্তরীকরণ)</div><div class="desc">Hand Note - PDF Library</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Trigonometry (ত্রিকোণমিতি)</div><div class="desc">Hand Note - PDF Library</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Circle (বৃত্ত) &amp; Polynomial (বহুপদী)</div><div class="desc">Hand Note - PDF Library</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- BANGLA -->
+        <!-- ════════════════════════════════════════ -->
+        <div class="category" data-searchable>
+            <div class="category-header" onclick="toggleCategory(this)">
+                <span class="icon">&#x1F4D6;</span>
+                <h2>Bangla</h2>
+                <span class="count">9 resources</span>
+                <span class="toggle">&#x25BC;</span>
+            </div>
+            <div class="category-content">
+
+                <div class="subcategory">
+                    <div class="sub-header sub-red" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4D6;</span>
+                        <span class="sub-label">Bangla 1st Paper - Test Papers (SAYEM)</span>
+                        <span class="sub-count">5</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://drive.google.com/file/d/1V-qmOjzq9w8FKMUIoMFrMRsgootIVyEJ/view" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> গদ্য (Prose)</div><div class="desc">HSC Test Paper 2023</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/file/d/1Aw7JW1JWwns_34mVRd3MSPr1TO6Jyyo8/view" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> কবিতা (Poetry)</div><div class="desc">HSC Test Paper 2023</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/file/d/1xE0CKqmxSk44qgT5ED1cJ5NjExMnHCXI/view" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> নাটক (Drama)</div><div class="desc">HSC Test Paper 2023</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/file/d/1Kzzrm5gPSSy40pOb_s-2sL5CpNaH9vzT/view" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> উপন্যাস (Novel)</div><div class="desc">HSC Test Paper 2023</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/file/d/1Rtxym7QXb-YZQYwYtSNh4uCzBaqUzE8T/view" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> MCQ (All)</div><div class="desc">HSC Test Paper 2023</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-blue" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4D7;</span>
+                        <span class="sub-label">Bangla 2nd Paper - Test Papers (SAYEM)</span>
+                        <span class="sub-count">4</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://drive.google.com/file/d/17VwbHpTCSsEbsqVgq945zEBiZ7PN9p9F/view" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> উচ্চারণ (Pronunciation)</div><div class="desc">HSC Test Paper 2023</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/file/d/1ISKoRGxFHHXDrfPJ7vUAp8OIwxjh_kn_/view" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> বানান (Spelling)</div><div class="desc">HSC Test Paper 2023</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/file/d/1weovFZI4uqz97QN7PqbGVM8kNeUE2EJp/view" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> ব্যাকরণিক শব্দশ্রেণি (Word Class)</div><div class="desc">HSC Test Paper 2023</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/file/d/1mnb9lxCHM499F3ISZ7RMAqqUIsXnyrjY/view" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> উপসর্গ ও সমাস (Prefix &amp; Compound)</div><div class="desc">HSC Test Paper 2023</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- ENGLISH -->
+        <!-- ════════════════════════════════════════ -->
+        <div class="category" data-searchable>
+            <div class="category-header" onclick="toggleCategory(this)">
+                <span class="icon">&#x1F4D7;</span>
+                <h2>English</h2>
+                <span class="count">3 resources</span>
+                <span class="toggle">&#x25BC;</span>
+            </div>
+            <div class="category-content">
+
+                <div class="subcategory">
+                    <div class="sub-header sub-green" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4DA;</span>
+                        <span class="sub-label">English Books</span>
+                        <span class="sub-count">2</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Apex English (78 MB)</div><div class="desc">English Preparation Book</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> English Full Book 2020 (113.7 MB)</div><div class="desc">Udvash - Unmesh</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-purple" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4AC;</span>
+                        <span class="sub-label">Spoken English</span>
+                        <span class="sub-count">1</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Ghore Boshe Spoken English - Munzereen Shahid</div><div class="desc">Updated Version (34.2 MB)</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- ICT -->
+        <!-- ════════════════════════════════════════ -->
+        <div class="category" data-searchable>
+            <div class="category-header" onclick="toggleCategory(this)">
+                <span class="icon">&#x1F4BB;</span>
+                <h2>ICT</h2>
+                <span class="count">2 resources</span>
+                <span class="toggle">&#x25BC;</span>
+            </div>
+            <div class="category-content">
+
+                <div class="subcategory">
+                    <div class="sub-header sub-cyan" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F451;</span>
+                        <span class="sub-label">Royal Guide HSC-26</span>
+                        <span class="sub-count">1</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/8838?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> ICT</div><div class="desc">IQ Gamer PDF Store</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-orange" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4DD;</span>
+                        <span class="sub-label">Edge Course Lecture Sheet</span>
+                        <span class="sub-count">1</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/2284" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> ICT Lecture Sheet</div><div class="desc">Edge Course</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- UNIVERSITY ADMISSION -->
+        <!-- ════════════════════════════════════════ -->
+        <div class="category" data-searchable>
+            <div class="category-header" onclick="toggleCategory(this)">
+                <span class="icon">&#x1F393;</span>
+                <h2>University Admission</h2>
+                <span class="count">16 resources</span>
+                <span class="toggle">&#x25BC;</span>
+            </div>
+            <div class="category-content">
+
+                <div class="subcategory">
+                    <div class="sub-header sub-purple" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4DD;</span>
+                        <span class="sub-label">Question Banks (DU, SUST, JNU, IU, CU)</span>
+                        <span class="sub-count">1</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> All Question Banks - PDF Library</div><div class="desc">DU A/D Unit, SUST, JNU, IU, CU</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-blue" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4CA;</span>
+                        <span class="sub-label">DU Model Test Papers</span>
+                        <span class="sub-count">5</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://drive.google.com/drive/folders/125mqx-9lAeLvxQMB3tv72UdrA0_D5DsW" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> Omeca Model Tests</div><div class="desc">Google Drive Folder</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/drive/folders/1gCSeAZu7Zi_HPriJxXy5Rjw9iQEol2X_" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> Udvash Model Tests</div><div class="desc">Google Drive Folder</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/drive/folders/18LXM-4BEwPL1J1LHsGM0qHTeS0hN5gHT" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> Bigganbidda Model Tests</div><div class="desc">Google Drive Folder</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/file/d/1hs_GRl6kTyTpb1YD7wubsnnBf3VjCGHV/view" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> UCC Model Test</div><div class="desc">Google Drive File</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/drive/folders/1fbO0PosuwTN8I6KqWJkChlELwXwhh8Ty" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> AAPathshala Model Tests</div><div class="desc">Google Drive Folder</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-green" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4C4;</span>
+                        <span class="sub-label">DU Answer Sheet &amp; OMR</span>
+                        <span class="sub-count">1</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/2270" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> DU Answer Sheet Sample (Full)</div><div class="desc">OMR + Written Copy - Print &amp; Practice</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-orange" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4D6;</span>
+                        <span class="sub-label">Written Preparation (Energy Book)</span>
+                        <span class="sub-count">2</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://forms.gle/krAvatoCUb8o83B7A" target="_blank"><div class="title"><span class="badge badge-form">Form</span> DU Written Energy Book - Order via Google Form</div><div class="desc">Gift &amp; Free Delivery</div></a></li>
+                            <li class="link-item"><a href="https://rokshort.com/InitPhzJE" target="_blank"><div class="title"><span class="badge badge-pdf">PDF</span> Rokomari Order Link</div><div class="desc">Preview &amp; Collect</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- GK & CURRENT AFFAIRS -->
+        <!-- ════════════════════════════════════════ -->
+        <div class="category" data-searchable>
+            <div class="category-header" onclick="toggleCategory(this)">
+                <span class="icon">&#x1F4DA;</span>
+                <h2>GK &amp; Current Affairs</h2>
+                <span class="count">8 resources</span>
+                <span class="toggle">&#x25BC;</span>
+            </div>
+            <div class="category-content">
+
+                <div class="subcategory">
+                    <div class="sub-header sub-blue" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4DA;</span>
+                        <span class="sub-label">GK Preparation Books (Udvash - Unmesh)</span>
+                        <span class="sub-count">4</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> GK-01 Series (Week 1-3)</div><div class="desc">Udvash - Unmesh GK Prep Book</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> GK-02 Series (Week 4-6)</div><div class="desc">BD &amp; International Affairs</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> GK-03 Series (Week 7-9)</div><div class="desc">BD &amp; International Affairs</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> GK-04 Series (Week 10-12)</div><div class="desc">BD &amp; International Affairs</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-green" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4C5;</span>
+                        <span class="sub-label">Current Affairs &amp; Medico GK</span>
+                        <span class="sub-count">3</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Current Affairs September 2021</div><div class="desc">12 MB PDF</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Corona Virus A-Z (Medico GK)</div><div class="desc">771 KB - Recent Info</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> GK Recent Information BDS</div><div class="desc">5.9 MB - Medico GK</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-red" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4D6;</span>
+                        <span class="sub-label">Jobayer GK</span>
+                        <span class="sub-count">1</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Jobayer GK (জোবায়ের জিকে)</div><div class="desc">117.7 MB - Full Book</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- MEDICAL / DENTAL -->
+        <!-- ════════════════════════════════════════ -->
+        <div class="category" data-searchable>
+            <div class="category-header" onclick="toggleCategory(this)">
+                <span class="icon">&#x1FA7A;</span>
+                <h2>Medical / Dental</h2>
+                <span class="count">6 resources</span>
+                <span class="toggle">&#x25BC;</span>
+            </div>
+            <div class="category-content">
+
+                <div class="subcategory">
+                    <div class="sub-header sub-blue" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4DA;</span>
+                        <span class="sub-label">Dental Aid Books</span>
+                        <span class="sub-count">4</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Z. Dental Aid (Full - 50.8 MB)</div><div class="desc">For Dental Preparation</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Z. Dental Aid Compressed (5.9 MB)</div><div class="desc">Compressed version</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> C1, C2 Dental Aid Compressed</div><div class="desc">Chemistry Paper 1 &amp; 2</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Phy1, Phy2 Dental Aid Compressed</div><div class="desc">Physics Paper 1 &amp; 2</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-green" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F9D1;&#x200D;&#x2695;&#xFE0F;</span>
+                        <span class="sub-label">Nursing &amp; Other Medical</span>
+                        <span class="sub-count">2</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> BSC Nursing Question Solution 21-22</div><div class="desc">AAPathshala (367 KB)</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> IQ Summit Full Book (112.4 MB)</div><div class="desc">ছায়ামঞ্চ সম্পূর্ণ বই</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- IELTS -->
+        <!-- ════════════════════════════════════════ -->
+        <div class="category" data-searchable>
+            <div class="category-header" onclick="toggleCategory(this)">
+                <span class="icon">&#x1F30D;</span>
+                <h2>IELTS</h2>
+                <span class="count">4 resources</span>
+                <span class="toggle">&#x25BC;</span>
+            </div>
+            <div class="category-content">
+
+                <div class="subcategory">
+                    <div class="sub-header sub-indigo" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x270D;&#xFE0F;</span>
+                        <span class="sub-label">IELTS Writing Resources</span>
+                        <span class="sub-count">2</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> The 20 Day IELTS Essay Challenge</div><div class="desc">Print version (1.9 MB)</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> IELTS Writing Forecast</div><div class="desc">2.3 MB PDF</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-purple" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4D6;</span>
+                        <span class="sub-label">IELTS Vocabulary &amp; Task 1</span>
+                        <span class="sub-count">2</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> 4000+ IELTS Synonyms</div><div class="desc">792 KB</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Writing Task 1 Course Pack</div><div class="desc">3.6 MB</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- COACHING MATERIALS & NOTES -->
+        <!-- ════════════════════════════════════════ -->
+        <div class="category" data-searchable>
+            <div class="category-header" onclick="toggleCategory(this)">
+                <span class="icon">&#x1F4CB;</span>
+                <h2>Coaching Materials &amp; Notes</h2>
+                <span class="count">10 resources</span>
+                <span class="toggle">&#x25BC;</span>
+            </div>
+            <div class="category-content">
+
+                <div class="subcategory">
+                    <div class="sub-header sub-purple" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F3EB;</span>
+                        <span class="sub-label">Edge Course (Lecture Sheets)</span>
+                        <span class="sub-count">3</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/2282?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Bangla - Edge Course Lecture Sheet</div><div class="desc">IQ Gamer PDF Store</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/2284" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> ICT - Edge Course Lecture Sheet</div><div class="desc">IQ Gamer PDF Store</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/2288?single" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Physics, Chemistry, Math - Edge Course</div><div class="desc">IQ Gamer PDF Store</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-blue" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F516;</span>
+                        <span class="sub-label">Retina Online Exam Batch</span>
+                        <span class="sub-count">3</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Tutorial-2 Question &amp; Answer Set C</div><div class="desc">723 KB</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> B-03 (Set-C) Exam Paper</div><div class="desc">315 KB</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Tutorial-01 Set-C(s) Answer Script</div><div class="desc">271 KB</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-orange" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4D1;</span>
+                        <span class="sub-label">Important PDFs Master Collection</span>
+                        <span class="sub-count">5</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/755" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> All Important PDF File #1</div><div class="desc">IQ Gamer PDF Store</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/757" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> All Important PDF File #2</div><div class="desc">IQ Gamer PDF Store</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/2085" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> All Important PDF File #3</div><div class="desc">IQ Gamer PDF Store</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/1391" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> All Important Note #1</div><div class="desc">IQ Gamer PDF Store</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore/2272" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> All Important Note #2</div><div class="desc">IQ Gamer PDF Store</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- TELEGRAM CHANNELS -->
+        <!-- ════════════════════════════════════════ -->
+        <div class="category" data-searchable>
+            <div class="category-header" onclick="toggleCategory(this)">
+                <span class="icon">&#x1F4E2;</span>
+                <h2>Telegram Channels &amp; Groups</h2>
+                <span class="count">7 resources</span>
+                <span class="toggle">&#x25BC;</span>
+            </div>
+            <div class="category-content">
+
+                <div class="subcategory">
+                    <div class="sub-header sub-blue" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4E2;</span>
+                        <span class="sub-label">HSC 2026 Academic Channels</span>
+                        <span class="sub-count">3</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/mdacademic" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> MD Academic &amp; Admission Channel</div><div class="desc">Courses, Notes, Practice Sheets</div></a></li>
+                            <li class="link-item"><a href="https://t.me/mdadmission" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> MD Academic Discussion Group</div><div class="desc">TG Discussion Group</div></a></li>
+                            <li class="link-item"><a href="https://t.me/mdadmission/62586" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> MD Academic Share Group Links</div><div class="desc">For course enrollment tasks</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-green" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F3E0;</span>
+                        <span class="sub-label">IQ Gamer Network</span>
+                        <span class="sub-count">4</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_Vs_AdmissionWarriors" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Main Channel - Admission Warriors</div><div class="desc">Updates, Notes, IQ Solve Exams</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> PDF Library - ARC (IQ Gamer)</div><div class="desc">All PDFs &amp; Study Materials</div></a></li>
+                            <li class="link-item"><a href="https://t.me/IQGAW_GKWorld" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> GK World Channel</div><div class="desc">Recent GK Updates &amp; Admission GK</div></a></li>
+                            <li class="link-item"><a href="https://t.me/AR_Comrade" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> AR COMRADE Channel</div><div class="desc">Academic &amp; Admission Care</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- MISCELLANEOUS -->
+        <!-- ════════════════════════════════════════ -->
+        <div class="category" data-searchable>
+            <div class="category-header" onclick="toggleCategory(this)">
+                <span class="icon">&#x1F4C1;</span>
+                <h2>Miscellaneous</h2>
+                <span class="count">6 resources</span>
+                <span class="toggle">&#x25BC;</span>
+            </div>
+            <div class="category-content">
+
+                <div class="subcategory">
+                    <div class="sub-header sub-pink" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F3A8;</span>
+                        <span class="sub-label">Graphic Design</span>
+                        <span class="sub-count">1</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> Graphic Design ar Panda - 10MinuteSchool</div><div class="desc">By Asif Hossain (5.1 MB)</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-red" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F1E7;&#x1F1E9;</span>
+                        <span class="sub-label">1971 Liberation War</span>
+                        <span class="sub-count">1</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://t.me/IQGamer_PDFStore" target="_blank"><div class="title"><span class="badge badge-tg">TG</span> ১৯৭১ ঘটনাপ্রবাহ - Infographics (2.6 MB)</div><div class="desc">Important for Medical Admission GK</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subcategory">
+                    <div class="sub-header sub-cyan" onclick="toggleSub(this)">
+                        <span class="sub-icon">&#x1F4E6;</span>
+                        <span class="sub-label">HSC Batch 2026 Course Materials</span>
+                        <span class="sub-count">4</span>
+                        <span class="sub-toggle">&#x25BC;</span>
+                    </div>
+                    <div class="sub-content">
+                        <ul class="link-list">
+                            <li class="link-item"><a href="https://drive.google.com/file/d/1J2mybd5JuppwPBdSAiqf7HYzrCHBkv3E/view" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> Course Material File #1</div><div class="desc">Google Drive</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/file/d/1pgew8Y8aFvSN3BzdxIiEgtoJydGU0SMu/view" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> Course Material File #2</div><div class="desc">Google Drive</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/file/d/1YTW681qILi21sKaywU_oJDx2JhfhHdZM/view" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> Course Material File #3</div><div class="desc">Google Drive</div></a></li>
+                            <li class="link-item"><a href="https://drive.google.com/file/d/1fjZS-9A47o6qfg5Yawx4b2Go5nqy54HZ/view" target="_blank"><div class="title"><span class="badge badge-drive">Drive</span> Course Material File #4</div><div class="desc">Google Drive</div></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleCategory(header) {
+            header.classList.toggle('active');
+            header.nextElementSibling.classList.toggle('show');
+        }
+
+        function toggleSub(header) {
+            header.classList.toggle('active');
+            header.nextElementSibling.classList.toggle('show');
+        }
+
+        function filterResources() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.category').forEach(cat => {
+                const text = cat.textContent.toLowerCase();
+                const matches = text.includes(term);
+                cat.style.display = matches ? 'block' : 'none';
+                if (matches && term) {
+                    cat.querySelector('.category-content').classList.add('show');
+                    cat.querySelector('.category-header').classList.add('active');
+                    cat.querySelectorAll('.sub-content').forEach(s => s.classList.add('show'));
+                    cat.querySelectorAll('.sub-header').forEach(s => s.classList.add('active'));
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const first = document.querySelector('.category-header');
+            if (first) { toggleCategory(first); }
+        });
+    </script>
+</body>
+</html>
